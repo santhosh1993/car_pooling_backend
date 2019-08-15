@@ -14,10 +14,12 @@ class Service(models.Model):
     service_type = models.ForeignKey(ServiceType, on_delete=models.CASCADE)
     date_time = models.DateTimeField()
     max_bookings = models.IntegerField()
-    bookings_booked = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"{self.service_type} | {self.date_time} | {self.max_bookings} | {self.bookings_booked}"
+        return f"{self.service_type} | {self.date_time} | {self.max_bookings}"
+
+    def users(self):
+        return self.userbooking_set.all()
 
 
 class UserBooking(models.Model):
