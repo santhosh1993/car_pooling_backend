@@ -1,9 +1,11 @@
-from .models import Service, UserBooking
+from .models import Service, UserBooking, ServiceType
 from .serializers import ServiceSerializer, UserBookingSerializer
 
 from rest_framework.generics import ListAPIView, DestroyAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from datetime import datetime
+from django.utils.timezone import make_aware
 
 from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
@@ -72,4 +74,29 @@ class UserBookingCreate(APIView):
             return Response({"message": "Invalid service"}, HTTP_400_BAD_REQUEST)
 
 
+class ServiceCreateAPI(APIView):
+    def post(self, request, format=None):
+        service_type_id = request.data.get('service_type_id')
+        service_data = request.data.get('service_data')
+        service_type = ServiceType.objects.filter(id=service_type_id)
 
+        if service_type.exists():
+            service_type = service_type.get()
+            for each in service_data:
+                date_time = each['date_time']
+                date_time = make_aware(datetime.strptime(date_time, '%Y-%m-%dT%H:%M:%S'))
+                max_bookings = each['max_bookings']
+                service = Service.objects.filter(date_time=date_time, service_type=service_type)
+                if service.exists():
+                    service = service.get()
+                else:
+                    service = Service()
+
+                service.date_time = date_time
+                service.max_bookings = max_bookings
+                service.service_type = service_type
+                service.save()
+
+            return Response({"message": "New services are created/updated"}, HTTP_200_OK)
+
+        return Response({"message": "Invalid service type"}, HTTP_400_BAD_REQUEST)
