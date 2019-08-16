@@ -9,6 +9,7 @@ class ServiceType(models.Model):
     def __str__(self):
         return f"{self.type}"
 
+
 class Service(models.Model):
     id = models.AutoField(primary_key=True)
     service_type = models.ForeignKey(ServiceType, on_delete=models.CASCADE)
@@ -23,6 +24,21 @@ class Service(models.Model):
 
 
 class UserBooking(models.Model):
+    USER_TURNEDUP_STATUS = (
+        ('t', 'Turned Up'),
+        ('n', 'None')
+    )
+
     id = models.AutoField(primary_key=True)
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
     user_id = models.IntegerField()
+    turned_up_status = models.CharField(
+        max_length=1,
+        choices=USER_TURNEDUP_STATUS,
+        blank=True,
+        default='n',
+        help_text='Turned up status',
+    )
+    
+
+
