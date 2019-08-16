@@ -6,5 +6,6 @@ urlpatterns = [
     path('userbooking/<int:id>/delete', SeatBooking.api_views.UserBookingDestroy.as_view(), name= 'Delete_Booking'),
     path('userbookingupdate/<str:type>/', SeatBooking.api_views.UserBookingUpdate.as_view()),
     path('userbooking/book', SeatBooking.api_views.UserBookingCreate.as_view(), name='Create_User_Booking'),
-    path('services/create', SeatBooking.api_views.ServiceCreateAPI.as_view(),name='Services_Create')
+    path('services/create', SeatBooking.api_views.ServiceCreateAPI.as_view(),name='Services_Create'),
+    path('services/createservicetype',SeatBooking.api_views.ServiceTypeCreateAPI.as_view(),name='Service_Type_Create')
 ]

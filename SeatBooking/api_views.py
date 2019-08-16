@@ -100,3 +100,16 @@ class ServiceCreateAPI(APIView):
             return Response({"message": "New services are created/updated"}, HTTP_200_OK)
 
         return Response({"message": "Invalid service type"}, HTTP_400_BAD_REQUEST)
+
+class ServiceTypeCreateAPI(APIView):
+    def post(self, request, format=None):
+        type = request.data.get('type')
+        service_type = ServiceType.objects.filter(type=type)
+
+        if service_type.exists():
+            return Response({"message": "Service Type already exists"}, HTTP_200_OK)
+        else:
+            service_type = ServiceType()
+            service_type.type = type
+            service_type.save()
+            return Response({"message": 'New service is created'}, HTTP_200_OK)
