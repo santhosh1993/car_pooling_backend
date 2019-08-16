@@ -25,8 +25,9 @@ class User(models.Model):
 
     @staticmethod
     def authenticate_user(email_id, password):
-        user = User.objects.get(email_id=email_id)
-        if user is not None:
+        user = User.objects.filter(email_id=email_id)
+        if user.exists():
+            user = user.get()
             if user.password == password:
                 return user
         return None
