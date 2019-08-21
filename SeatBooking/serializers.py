@@ -19,7 +19,7 @@ class ServiceSerializer(serializers.ModelSerializer):
 class UserBookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserBooking
-        fields = ('id', 'user_id')
+        fields = ('id', 'user_id', 'user_name', 'employeeId')
 
 class ServiceTypeSerializer(serializers.ModelSerializer):
     class Meta:

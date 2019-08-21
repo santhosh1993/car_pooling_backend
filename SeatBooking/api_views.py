@@ -6,6 +6,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from datetime import datetime
 from django.utils.timezone import make_aware
+import time
+
 from enum import Enum
 
 from rest_framework.status import (
@@ -18,6 +20,9 @@ from rest_framework.status import (
 class ServiceList(ListAPIView):
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
+
+    def get_queryset(self):
+        return Service.objects.all()
 
 
 class UserBookingDestroy(DestroyAPIView):
@@ -52,25 +57,29 @@ class UserBookingUpdate(APIView):
                 cache.delete(f'userbooking_data_{userbooking.id}')
 
             else:
-                return Response({"message": "Invalid user booking"}, HTTP_400_BAD_REQUEST)
+                return Response({"message": "Invalid user booking", "status_code": 4002}, HTTP_400_BAD_REQUEST)
 
-        return Response({"message": "Status got updated"}, HTTP_200_OK)
+        return Response({"message": "Status got updated", "status_code": 2002}, HTTP_200_OK)
 
 class UserBookingCreate(APIView):
     def post(self, request, format=None):
         service_id = request.data.get('service_id')
         user_id = request.data.get('user_id')
+        employeeId = request.data.get('employee_id')
+        user_name = request.data.get('user_name')
         service = Service.objects.filter(id=service_id)
         user_booking = UserBooking.objects.filter(id=user_id)
         if service.exists():
             if user_booking.exists():
-                return Response({"message": "Sorry there is already a booking"}, HTTP_200_OK)
+                return Response({"message": "Sorry there is already a booking", "status_code": 4001}, HTTP_200_OK)
             else:
                 user_booking = UserBooking()
                 user_booking.service = service.get()
                 user_booking.user_id = user_id
+                user_booking.user_name = user_name
+                user_booking.employeeId = employeeId
                 user_booking.save()
-                return Response({"message": "User Booking created"}, HTTP_200_OK)
+                return Response(UserBookingSerializer(user_booking).data)
 
         else:
             return Response({"message": "Invalid service"}, HTTP_400_BAD_REQUEST)
